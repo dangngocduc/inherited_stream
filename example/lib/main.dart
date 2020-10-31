@@ -76,15 +76,9 @@ class _HomePageState extends State<HomePage> {
 class Progress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final progress = context.watch<double, ProgressCubit>();
-    final percentage = (progress * 100).toStringAsFixed(2);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CircularProgressIndicator(value: progress, strokeWidth: 8),
-        const SizedBox(height: 16),
-        Text('$percentage%', style: Theme.of(context).textTheme.headline6),
-      ],
+    return CircularProgressIndicator(
+        value: context.watch<double, ProgressCubit>(),
+        strokeWidth: 8
     );
   }
 }
