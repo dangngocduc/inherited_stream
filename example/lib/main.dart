@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:inherited_stream/inherited_cubit.dart';
 
 import 'progress_cubit.dart';
+import 'package:inherited_stream/extension.dart';
+
+import 'progress_cubit.dart';
 
 void main() => runApp(MyApp());
 
@@ -69,11 +72,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 /// StatelessWidget which renders a [CircularProgressIndicator] based
-/// on the value of the [ProgressModel].
+/// on the value of the [ProgressCubit].
 class Progress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final progress = InheritedCubit.of<double, ProgressCubit>(context);
+    final progress = context.watch<double, ProgressCubit>();
     final percentage = (progress * 100).toStringAsFixed(2);
     return Column(
       mainAxisSize: MainAxisSize.min,
