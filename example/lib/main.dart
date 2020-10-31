@@ -1,7 +1,9 @@
 import 'dart:math' show Random;
+
 import 'package:flutter/material.dart';
-import 'package:inherited_stream/inherited_stream.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:inherited_stream/inherited_cubit.dart';
+
+import 'progress_cubit.dart';
 
 void main() => runApp(MyApp());
 
@@ -20,11 +22,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _subject = BehaviorSubject<double>.seeded(0.0);
+  ProgressCubit progressCubit = ProgressCubit(0.0);
 
   @override
   void dispose() {
-    _subject.close();
+    progressCubit.close();
     super.dispose();
   }
 
@@ -34,8 +36,12 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Center(
-          child: ProgressModel(stream: _subject.stream, child: Progress()),
+          child: InheritedCubit<double, ProgressCubit>(
+              cubit: progressCubit,
+              child: Builder(builder: (context) => Progress())
+          ),
         ),
+
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -45,16 +51,16 @@ class _HomePageState extends State<HomePage> {
             child: const Icon(Icons.add),
             onPressed: () {
               final random = (Random().nextDouble() * 0.1);
-              final value = _subject.value + random >= 1.0
+              final value = progressCubit.state + random >= 1.0
                   ? 1.0
-                  : _subject.value + random;
-              _subject.add(value);
+                  : progressCubit.state + random;
+              progressCubit.add(value);
             },
           ),
           const SizedBox(height: 8),
           FloatingActionButton(
             child: const Icon(Icons.clear),
-            onPressed: () => _subject.add(0),
+            onPressed: () => progressCubit.add(0),
           ),
         ],
       ),
@@ -67,7 +73,7 @@ class _HomePageState extends State<HomePage> {
 class Progress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final progress = ProgressModel.of(context);
+    final progress = InheritedCubit.of<double, ProgressCubit>(context);
     final percentage = (progress * 100).toStringAsFixed(2);
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -80,24 +86,3 @@ class Progress extends StatelessWidget {
   }
 }
 
-/// {@template progress_model}
-/// [InheritedStream] which exposes a [ValueStream<double>] which can be
-/// used to notify dependents when the stream emits a new `double`.
-/// {@endtemplate}
-class ProgressModel extends InheritedStream<ValueStream<double>> {
-  /// {@macro progress_model}
-  const ProgressModel({
-    Key key,
-    ValueStream<double> stream,
-    Widget child,
-  }) : super(key: key, stream: stream, child: child);
-
-  /// static method that calls [BuildContext.dependOnInheritedWidgetOfExactType]
-  /// to register the context as a dependent and expose a `double`.
-  static double of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<ProgressModel>()
-        .stream
-        .value;
-  }
-}

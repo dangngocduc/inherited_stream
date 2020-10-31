@@ -14,6 +14,7 @@ dependencies:
   inherited_stream:
     path: ../
   rxdart: ^0.24.1
+  flutter_bloc:
 
 flutter:
   uses-material-design: true

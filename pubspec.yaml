@@ -12,6 +12,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_bloc:
 
 dev_dependencies:
   flutter_test:
