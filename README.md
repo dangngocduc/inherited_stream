@@ -78,7 +78,10 @@ class _HomePageState extends State<HomePage> {
 class Progress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return CircularProgressIndicator(value: context.watch<double, ProgressCubit>(), strokeWidth: 8);
+    return CircularProgressIndicator(
+      value: context.watch<double, ProgressCubit>(), 
+      strokeWidth: 8,
+    );
   }
 }
 
